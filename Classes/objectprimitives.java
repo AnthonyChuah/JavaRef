@@ -1,3 +1,5 @@
+import java.util.*;
+
 class Test {
     public static void main() {
 	/*
@@ -7,7 +9,7 @@ class Test {
 	 L.AddToEnd( 10 );
 	 Instead you must use:
 	*/
-	List L = new List();
+	ArrayList L = new ArrayList();
 	L.AddToEnd( new Integer(10) );
 	// An object version exists for Boolean, Integer, and Double.
 	L.firstElement();
