@@ -22,4 +22,9 @@ Solutions:
 1. Always compile package from parent directory.
 2. Always compile all files in a package at the same time.
 3. Make a circular link from package subdir to itself ???
+
+To use a package that is not in a subdir of the pwd, set env var CLASSPATH to tell Java compiler where to look.
+setenv CLASSPATH C:/directory1
+such that C:/directory1/Package is the package you want to include.
+Note: do not point to the package subdir itself, but the PARENT of the package subdir.
 */

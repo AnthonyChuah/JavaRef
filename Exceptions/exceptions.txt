@@ -1,0 +1,108 @@
+Exceptions can be built-in (actually, defined in one of Java's standard libraries) or user-defined. Here are some examples of built-in exceptions with links to their documentation:
+
+ArithmeticException (e.g., divide by zero)
+ClassCastException (e.g., attempt to cast a String Object to Integer)
+IndexOutOfBoundsException
+NullPointerException
+FileNotFoundException (e.g., attempt to open a non-existent file for reading)
+
+Example (a program that tries to open a file named by the first command-line argument for reading)
+public static void main(String[] args)
+{
+    InputStream istream;
+    File        inputFile;
+    
+    try {
+        inputFile = new File(args[0]);
+	istream =   new InputStream(inputFile);  // may throw FileNotFoundException
+    } catch (FileNotFoundException ex) {
+        System.out.println("file " + args[0] + " not found");
+    }
+}
+
+A finally clause is usually included to make sure that some clean-up (e.g., closing opened files) is done.
+A finally clause always executes when its try block executes (whether or not there is an exception). Furthermore, if the finally clause includes a transfer of control statement (return, break, continue, throw) then that statement overrides any transfer of control initiated in the try or in a catch clause. First, let's assume that the finally clause does not include any transfer of control. Here are the situations that can arise:
+No exception occurs during execution of the try, and no transfer of control is executed in the try. 
+=> The finally clause executes, then the statement following the try block.
+No exception occurs during execution of the try, but it does execute a transfer of control. 
+=> The finally clause executes, then the transfer of control takes place.
+An exception does occur during execution of the try, and there is no catch clause for that exception. 
+=> The finally clause executes, then the uncaught exception is "passed up" to the next enclosing try block, possibly in a calling function.
+An exception does occur during execution of the try, and there is a catch clause for that exception. The catch clause does not execute a transfer of control. 
+=> The catch clause executes, then the finally clause, then the statement following the try block.
+An exception does occur during execution of the try, there is a catch clause for that exception, and the catch clause does execute a transfer of control. 
+=> The catch clause executes, then the finally clause, then the transfer of control takes place.
+If the finally block does include a transfer of control, then that takes precedence over any transfer of control executed in the try or in an executed catch clause. So for all of the cases listed above, the finally clause would execute, then its transfer of control would take place. Here's one example:
+
+    try {
+        return 0;
+    } finally {
+        return 2;
+    }
+    
+The result of executing this code is that 2 is returned.
+Note that this is rather confusing! The moral is that you probably do not want to include transfer-of-control statements in both the try statements and the finally clause, or in both a catch clause and the finally clause.
+
+Every exception is either a checked exception or an unchecked exception. If a method includes code that could cause a checked exception to be thrown, then:
+the exception must be declared in the method header, using a throws clause, or
+the code that might cause the exception to be thrown must be inside a try block with a catch clause for that exception.
+So in general, you must always include some code that acknowledges the possibility of a checked exception being thrown. If you don't, you will get an error when you try to compile your code.
+
+Exception Hierarchy
+
+                    +--------+
+                    | Object |
+                    +--------+
+		        |
+		        |
+                   +-----------+
+		   | Throwable |
+                   +-----------+
+                    /         \
+		   /           \
+          +-------+          +-----------+
+          | Error |          | Exception |
+          +-------+          +-----------+
+	   /  |  \           / |        \
+         \________/	  \______/    	 \
+			                +------------------+
+	unchecked	 checked	| RuntimeException |
+					+------------------+
+					  /   |    |      \
+					 \_________________/
+					   
+					   unchecked
+most of the built-in exceptions (e.g., NullPointerException, IndexOutOfBoundsException) are unchecked.
+IOExceptions (e.g., FileNotFoundException) are checked
+user-defined exceptions should usually be checked, so they should be subclasses of Exception.
+
+Choices when calling a function that may throw an exception
+
+Catch and handle the exception.
+Catch the exception, then re-throw it or throw another exception.
+Ignore the exception (let it "pass up" the call chain).
+Note that if your code might cause a checked exception to be thrown; i.e.,:
+your code throws a checked exception, or
+your code ignores a checked exception that might be thrown by a called function
+then your function must include a throws clause listing all such exceptions. For example:
+    public static void main(String[] args) throws FileNotFoundException, EOFException
+    { // an uncaught FileNotFoundException or EOFException may be thrown here }
+Only uncaught checked exceptions need to be listed in a function's throws clause. Unchecked exceptions can be caught in a try block, but if not, they need not be listed in the function's throws clause.
+
+How to Define and Throw Exceptions
+
+Java exceptions are objects.
+Define an exception by defining a class, for example:
+public class EmptyStackException extends Exception { }
+Note: New exceptions must be subclasses of Throwable; as discussed above, they are usually subclasses of Exception (so that they are checked). The exceptions you define do not have to be public classes; however, remember that if you do not make them public, then they can only used in the package in which they are defined.
+Throw an exception using a throw statement:
+public class Stack {
+...
+public Object Pop() throws EmptyStackException {
+if (Empty()) throw new EmptyStackException();
+...
+}
+}
+Note:
+Exceptions are objects, so you cannot simply throw "EmptyStackException" -- you must use "new" to create an exception object.
+Since the Pop method might throw the (checked) exception EmptyStackException, that must be included in Pop's throws clause.
