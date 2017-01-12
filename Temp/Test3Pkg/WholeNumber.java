@@ -1,11 +1,11 @@
 package Test3Pkg;
 
-public class WholeNumber {
+public class WholeNumber implements Expression {
     private int value;
     public WholeNumber(int _v) {
 	value = _v;
     }
-
+    public int evaluate() { return this.value; }
     // The @Override keyword tells the compiler that this function will override parent.
     // If it somehow is NOT an override, the compiler will catch your error! Nice.
     @Override
@@ -14,7 +14,7 @@ public class WholeNumber {
 	if (ob == null) { return false; }
 	if (ob instanceof WholeNumber) {
 	    WholeNumber that = (WholeNumber) ob;
-	    toReturn = (value == that.value);
+	    toReturn = (this.value == that.value);
 	} else {
 	    toReturn = false;
 	}
@@ -27,6 +27,6 @@ public class WholeNumber {
 	return (temp.toString());
     }
     public String toString1() {
-	return String.valueOf(value);
+	return String.valueOf(this.value);
     }
 }
